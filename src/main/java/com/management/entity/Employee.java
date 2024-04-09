@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "employees")
@@ -21,6 +23,9 @@ public class Employee implements Serializable {
 
     private String password;
 
-    // Getters and setters
+    @OneToMany(mappedBy = "employee")
+    private List<Attendance> attendances = new ArrayList<>();
+
+
 }
 

@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/timesheet")
@@ -58,16 +57,4 @@ public class TimesheetController {
         timesheetService.clockOut(existingTimesheet);
         return ResponseEntity.ok("Clock-out successful.");
     }
-    @GetMapping("/{username}/total-work-hours")
-    public ResponseEntity<String> getTotalWorkHours(@PathVariable String username) {
-        Employee employee = employeeService.findByUsername(username);
-        if (employee == null) {
-            return ResponseEntity.badRequest().body("Employee not found.");
-        }
-
-        Duration totalWorkHours = timesheetService.calculateTotalWorkHours(employee);
-        return ResponseEntity.ok("Total work hours: " + totalWorkHours.toHours() + " hours");
-    }
-
-
-    }
+}

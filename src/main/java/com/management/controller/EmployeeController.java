@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,19 +97,15 @@ public class EmployeeController {
         return ResponseEntity.noContent().build();
     }
 
-
-    @GetMapping("/{username}/total-work-hours")
-    public ResponseEntity<Map<LocalDate, Duration>> getTotalWorkHoursForSingleEmployeeAndDay(@PathVariable String username) {
-        LocalDate today = LocalDate.now();
-        Map<LocalDate, Duration> totalWorkHours = new LinkedHashMap<>();
-        for (int i = 0; i < 7; i++) {
-            LocalDate date = today.minusDays(i);
-            Duration workHours = employeeService.calculateTotalWorkHoursForSingleEmployeeAndDay(username, date);
-            totalWorkHours.put(date, workHours);
-        }
+ //TODO:
+    //  http://localhost:9000/employees/1/totalWorkHours
+    // getting particular employee last 7 days timesheet data
+    @GetMapping("/{id}/totalWorkHours")
+    public ResponseEntity<Map<LocalDate, Duration>> getTotalWorkHoursForSingleEmployeeAndDay(@PathVariable long id) {
+        Map<LocalDate, Duration> totalWorkHours = employeeService.calculateTotalWorkHoursForSingleEmployeeAndLastSeevanDays(id);
         return ResponseEntity.ok(totalWorkHours);
     }
-
+//TODO:
     @GetMapping("/total-work-hours")
     public ResponseEntity<Map<LocalDate, Duration>> getTotalWorkHoursForAllEmployeesAndDay() {
         return ResponseEntity.ok(employeeService.calculateTotalWorkHoursForAllEmployeesAndDay());

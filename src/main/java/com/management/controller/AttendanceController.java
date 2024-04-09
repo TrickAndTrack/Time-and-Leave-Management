@@ -8,15 +8,16 @@ import com.management.service.EmployeeService;
 import com.management.service.TimesheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
-@RestController("/attendance")
+@RestController
+@RequestMapping("/api")
 public class AttendanceController {
 
     @Autowired
@@ -62,5 +63,7 @@ public class AttendanceController {
     public List<Attendance> getAttendanceByMonthly(@RequestParam int year, @RequestParam int month) {
         return attendanceService.getAttendanceByMonthly(year, month);
     }
+
+
 }
 

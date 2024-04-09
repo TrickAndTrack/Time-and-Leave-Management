@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,16 +46,6 @@ public class TimesheetService {
         timesheetRepository.save(timesheet);
     }
 
-    public Duration calculateTotalWorkHours(Employee employee) {
-        List<Timesheet> timesheets = timesheetRepository.findByEmployee(employee);
-        Duration totalWorkHours = Duration.ZERO;
-        for (Timesheet timesheet : timesheets) {
-            if (timesheet.getClockOutTime() != null) {
-                totalWorkHours = totalWorkHours.plus(Duration.between(timesheet.getClockInTime(), timesheet.getClockOutTime()));
-            }
-        }
-        return totalWorkHours;
-    }
 
     public Duration calculateTotalWorkHoursForSingleEmployeeAndDay(Employee employee, LocalDateTime date) {
         LocalDateTime startOfDay = date.withHour(0).withMinute(0).withSecond(0);
@@ -89,6 +80,26 @@ public class TimesheetService {
     }
     public List<Timesheet> getTimesheetsByEmployeeAndDateRange(Employee employee, LocalDateTime startDate, LocalDateTime endDate) {
         return timesheetRepository.findByEmployeeAndClockInTimeBetween(employee, startDate, endDate);
+    }
+
+
+    public Duration calculateTotalWorkHoursForEmployeeAndDay(Long employeeId, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+
+        List<Timesheet> timesheets = timesheetRepository.findByEmployeeIdAndClockInTimeBetween(employeeId, startOfDay, endOfDay);
+
+        Duration totalWorkHours = Duration.ZERO;
+        for (Timesheet timesheet : timesheets) {
+            LocalDateTime clockInTime = timesheet.getClockInTime();
+            LocalDateTime clockOutTime = timesheet.getClockOutTime() != null ? timesheet.getClockOutTime() : LocalDateTime.now();
+            LocalDateTime timesheetStartTime = clockInTime.isBefore(startOfDay) ? startOfDay : clockInTime;
+            LocalDateTime timesheetEndTime = clockOutTime.isAfter(endOfDay) ? endOfDay : clockOutTime;
+
+            totalWorkHours = totalWorkHours.plus(Duration.between(timesheetStartTime, timesheetEndTime));
+        }
+
+        return totalWorkHours;
     }
 
 }

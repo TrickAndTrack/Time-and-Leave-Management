@@ -16,4 +16,7 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
     List<Timesheet> findByEmployeeAndClockInTimeBetween(Employee employee, LocalDateTime startDate, LocalDateTime endDate);
     List<Timesheet> findByClockInTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
 
+    List<Timesheet> findByEmployeeIdAndClockInTimeBetween(Long employeeId, LocalDateTime startTime, LocalDateTime endTime);
+
+
 }

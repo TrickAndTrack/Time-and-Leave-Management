@@ -1,16 +1,31 @@
 package com.management.service;
 
 import com.management.entity.Attendance;
+import com.management.entity.Employee;
 import com.management.repository.AttendanceRepository;
+import com.management.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AttendanceService {
+
+    @Autowired
+    private TimesheetService timesheetService;
+
+    @Autowired
+    private EmployeeService  employeeService;
+    @Autowired
+    EmployeeRepository employeeRepository;
+
+    @Autowired
+    AttendanceRepository repository;
+
+
     private final AttendanceRepository attendanceRepository;
 
     @Autowired
@@ -36,6 +51,6 @@ public class AttendanceService {
         return attendanceRepository.findByDate(date);
     }
 
-    // Other methods for generating reports
+
 }
 

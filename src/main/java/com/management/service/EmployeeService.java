@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -57,20 +59,40 @@ public class EmployeeService {
         }
     }
 
+
+
     // Delete an employee
     public void deleteEmployee(Long id) {
         employeeRepository.deleteById(id);
     }
 
-    public Duration calculateTotalWorkHoursForSingleEmployeeAndDay(String username, LocalDate date) {
-        Employee employee = employeeRepository.findByUsername(username);
+
+    public Map<LocalDate, Duration> calculateTotalWorkHoursForSingleEmployeeAndLastSeevanDays(long id) {
+        Employee employee = employeeRepository.findById(id);
         if (employee == null) {
             throw new EmployeeNotFoundException("Employee not found");
         }
-        return timesheetService.calculateTotalWorkHoursForSingleEmployeeAndDay(employee, date.atStartOfDay());
+
+        LocalDate today = LocalDate.now();
+        Map<LocalDate, Duration> totalWorkHours = new LinkedHashMap<>();
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = today.minusDays(i);
+            Duration workHours = timesheetService.calculateTotalWorkHoursForSingleEmployeeAndDay(employee, date.atStartOfDay());
+            totalWorkHours.put(date, workHours);
+        }
+        return totalWorkHours;
     }
+
+
 
     public Map<LocalDate, Duration> calculateTotalWorkHoursForAllEmployeesAndDay() {
         return timesheetService.calculateTotalWorkHoursForAllEmployeesAndDay();
+    }
+
+
+
+    public List<Long> getAllEmployeeIds() {
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream().map(Employee::getId).collect(Collectors.toList());
     }
 }
